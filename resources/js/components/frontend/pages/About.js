@@ -1,7 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-function About() {
+let Component = React.Component;
+
+class About extends Component {
+    constructor(props) {
+        console.log(props);
+        super(props)
+        this.state = {}
+    }
+    componentDidMount(){
+        document.title = 'About - My Blog';
+    }
+    render(){
     return (
         <div className="container py-2">
             <h1>
@@ -16,6 +27,7 @@ function About() {
             </p>
         </div>
     );
+    }
 }
 
 export default About;

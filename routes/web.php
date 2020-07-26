@@ -23,7 +23,13 @@ Route::get('/home', 'HomeController@index')->name('home');*/
 
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('frontend.pages.home');
+})->name('home');
+Route::get('/about', function () {
+    return view('frontend.pages.about');
+})->name('about');
+Route::get('/post/{id}', function () {
+    return view('frontend.pages.post');
+})->name('aPost');
 
 

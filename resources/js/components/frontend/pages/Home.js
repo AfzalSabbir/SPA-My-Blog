@@ -1,7 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {BrowserRouter as Router, Link, NavLink, Route} from 'react-router-dom';
+
+import PostView from '../pages/PostView';
 
 let Component = React.Component;
+let baseUrl = 'http://127.0.0.1:8000';
 
 class Home extends Component {
 	constructor(props) {
@@ -14,10 +18,12 @@ class Home extends Component {
         }
     }
     componentDidMount(){
+		document.title = 'Home - My Blog';
+	    console.log(this.props);
         this.getAll();
     }
     getAll() {
-        axios.get('http://127.0.0.1:8000/api/post').then((response) => {
+        axios.get(`${baseUrl}/api/post`).then((response) => {
             this.setState({
                 posts : response.data,
             });
@@ -34,7 +40,7 @@ class Home extends Component {
         });
     }
     delete(e, id) {
-        axios.delete(`http://127.0.0.1:8000/api/post/+${id}`).then((response) => {
+        axios.delete(`${baseUrl}/api/post/+${id}`).then((response) => {
             this.getAll();
         }).catch((error) => {
             console.error(error);
@@ -54,6 +60,10 @@ class Home extends Component {
             body  : post.body,
         });
     }
+    /*view(e, id) {
+    	console.log(id);
+    	window.location = baseUrl+'/post/'+id;
+    }*/
     submit(event) {
         event.preventDefault();
 
@@ -61,7 +71,7 @@ class Home extends Component {
 
         if(id == 0) {
 
-            axios.post(`http://127.0.0.1:8000/api/post`,{
+            axios.post(`${baseUrl}/api/post`,{
                 title: this.state.title,
                 body: this.state.body
             }).then((response) => {
@@ -71,7 +81,7 @@ class Home extends Component {
                 console.error(error);
             });            
         } else {
-            axios.put(`http://127.0.0.1:8000/api/post/+${id}`,{
+            axios.put(`${baseUrl}/api/post/+${id}`,{
                 title: this.state.title,
                 body: this.state.body
             }).then((response) => {
@@ -93,7 +103,7 @@ class Home extends Component {
         })
     }
     render(){
-    let i = 0
+	let i = 0
     return (
         <div>
             <div className="container mt-2">
@@ -102,9 +112,12 @@ class Home extends Component {
                         <form onSubmit={(e)=>this.submit(event)}>
                             <div className="form-row">
                                 <div className="col-6 offset-3">
-                                    <input onChange={ (event)=>this.titleChange(event) } type="text" value={ this.state.title } className="form-control my-2" placeholder="title"/>
-                                    <input onChange={ (event)=>this.bodyChange(event) } type="text" value={ this.state.body } className="form-control my-2" placeholder="body"/>
-                                    <input type="submit" className="btn btn-success my-2" />
+                                    <input required onChange={ (event)=>this.titleChange(event) } type="text" value={ this.state.title } className="form-control my-2" placeholder="title"/>
+                                    <textarea required onChange={ (event)=>this.bodyChange(event) } type="text" value={ this.state.body } className="form-control my-2" placeholder="body" rows="5"> </textarea>
+									<div className="btn-group my-2">
+	                                    <input type="submit" className="btn btn-success" />
+	                                    <button type="button" className="btn btn-info" onClick={()=>this.getAll()}> <i className="fa fa-refresh"></i></button>
+	                                </div>
                                 </div>
                             </div>
                         </form>
@@ -112,9 +125,9 @@ class Home extends Component {
                             <thead>
                                 <tr>
                                     <th width="20">#</th>
-                                    <th>Title</th>
+                                    <th width="25%">Title</th>
                                     <th>Body</th>
-                                    <th width="80">Action <button className="btn btn-success btn-sm py-0" onClick={()=>this.getAll()}> <i className="fa fa-refresh"></i></button></th>
+                                    <th width="80">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -125,6 +138,7 @@ class Home extends Component {
                                     <td>{post.body}</td>
                                     <td>
                                         <div className="btn-group">
+                                        	<Link to={`/post/${post.id}`} className="btn btn-info"><i className="fa fa-eye"></i></Link>
                                             <button onClick={(event)=>this.edit(event, post)} className="btn btn-warning"><i className="fa fa-pencil"></i></button>
                                             <button onClick={(e)=>this.delete(e, post.id)} className="btn btn-danger"><i className="fa fa-trash-o"></i></button>
                                         </div>
